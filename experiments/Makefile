@@ -8,7 +8,7 @@ TIMEOUT := 1000
 TODAY := 20201030
 ALGORITHMS := \
     si-noninduced-gss-$(TODAY) \
-    $(foreach problem,noninduced moreoddthaneven lessthreeodd parity, \
+    $(foreach problem,noninduced moreoddthaneven lessthreeodd parity simple, \
         $(foreach preprocess,gac none, \
             si-$(problem)-minion-preprocess-$(preprocess)-$(TODAY) \
             $(foreach comm,checker test propagate rollback, \
@@ -20,7 +20,7 @@ PARAMS := param
 all : $(foreach i, $(INSTANCES), $(foreach a, $(ALGORITHMS), $(RESULTS)/$(a)/$i/run-experiment.out ))
 
 runtimes.data : runtimes all
-	./runtimes | tee runtimes.data
+	./runtimes $(foreach a,$(ALGORITHMS),$(RESULTS)/$(a) ) > >(tee runtimes.data )
 
 runtimes : runtimes.cc
 	$(CXX) -std=c++17 $(CXXFLAGS) $(LDFLAGS) -o runtimes -O2 -W -Wall runtimes.cc
