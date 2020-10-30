@@ -19,11 +19,17 @@ PARAMS := param
 
 all : $(foreach i, $(INSTANCES), $(foreach a, $(ALGORITHMS), $(RESULTS)/$(a)/$i/run-experiment.out ))
 
+runtimes.data : runtimes all
+	./runtimes | tee runtimes.data
+
+runtimes : runtimes.cc
+	$(CXX) -std=c++17 $(CXXFLAGS) $(LDFLAGS) -o runtimes -O2 -W -Wall runtimes.cc
+
 dir-% :
 	mkdir -p $(RESULTS) $(RESULTS)/$*
 
 ladtoessence : ladtoessence.cc
-	$(CXX) -o ladtoessence -O2 -W -Wall ladtoessence.cc
+	$(CXX) -std=c++17 $(CXXFLAGS) $(LDFLAGS) -o ladtoessence -O2 -W -Wall ladtoessence.cc
 
 define ALGORITHM_template
 $(RESULTS)/$(1)/%/run-experiment.out : ladtoessence | dir-$(1)
