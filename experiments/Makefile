@@ -23,13 +23,13 @@ runtimes.data : runtimes all
 	./runtimes $(foreach a,$(ALGORITHMS),$(RESULTS)/$(a) ) > >(tee runtimes.data )
 
 runtimes : runtimes.cc
-	$(CXX) -std=c++17 $(CXXFLAGS) $(LDFLAGS) -o runtimes -O2 -W -Wall runtimes.cc
+	$(CXX) -std=c++17 $(CXXFLAGS) -o runtimes -O2 -W -Wall runtimes.cc $(LDFLAGS)
 
 dir-% :
 	mkdir -p $(RESULTS) $(RESULTS)/$*
 
 ladtoessence : ladtoessence.cc
-	$(CXX) -std=c++17 $(CXXFLAGS) $(LDFLAGS) -o ladtoessence -O2 -W -Wall ladtoessence.cc
+	$(CXX) -std=c++17 $(CXXFLAGS) -o ladtoessence -O2 -W -Wall ladtoessence.cc $(LDFLAGS)
 
 define ALGORITHM_template
 $(RESULTS)/$(1)/%/run-experiment.out : ladtoessence | dir-$(1)
