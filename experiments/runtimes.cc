@@ -26,16 +26,10 @@ auto main(int argc, char * argv[]) -> int
     for (int p = 1 ; p < argc ; ++p)
         dirs.emplace_back(argv[p]);
 
-    {
-        bool first = true;
-        for (auto & d : dirs) {
-            if (! first)
-                cout << " ";
-            cout << d.filename();
-            first = false;
-        }
-        cout << endl;
-    }
+    cout << "instance";
+    for (auto & d : dirs)
+        cout << " " << d.filename();
+    cout << endl;
 
     ifstream instances{ "instances.txt" };
     string line;
