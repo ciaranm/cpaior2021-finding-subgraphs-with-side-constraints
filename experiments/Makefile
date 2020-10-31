@@ -5,10 +5,10 @@ CATTER := cat
 INSTANCES_FILE := instances.txt
 INSTANCES := $(shell cat $(INSTANCES_FILE) | $(CATTER) | cut -d' ' -f1 | if [[ $(FILTER) == -1 ]] ; then cat ; else awk "(NR %$(MODULUS)) == ($(FILTER) % $(MODULUS))" ; fi)
 TIMEOUT := 1000
-TODAY := 20201030
+TODAY := 20201031
 ALGORITHMS := \
     si-noninduced-gss-$(TODAY) \
-    $(foreach problem,noninduced moreoddthaneven lessthreeodd parity simple, \
+    $(foreach problem,noninduced moreoddthaneven lessthreeodd parity, \
         $(foreach preprocess,gac none, \
             si-$(problem)-minion-preprocess-$(preprocess)-$(TODAY) \
             $(foreach comm,checker test propagate rollback, \
