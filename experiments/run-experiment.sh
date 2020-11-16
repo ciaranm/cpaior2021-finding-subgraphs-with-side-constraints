@@ -12,6 +12,12 @@ MS_SR_OPTS=
 MS_GSS_OPTS=
 if echo ${alg} | grep -q -- '-gss-' ; then
     solver=gss
+elif echo ${alg} | grep -q -- '-pathlad'- ; then
+    solver=pathlad
+elif echo ${alg} | grep -q -- '-vf2'- ; then
+    solver=vf2
+elif echo ${alg} | grep -q -- '-ri'- ; then
+    solver=ri
 else
     if echo ${alg} | grep -q -- '-minion-' ; then
         solver=minion
@@ -25,6 +31,8 @@ else
             MS_GSS_OPTS='--propagate-using-lackey always --send-partials-to-lackey'
         elif echo ${alg} | grep -q -- '-comm-rollback-' ; then
             MS_GSS_OPTS='--propagate-using-lackey root-and-backjump'
+        elif echo ${alg} | grep -q -- '-comm-randomrollback-' ; then
+            MS_GSS_OPTS='--propagate-using-lackey random-and-backjump'
         fi
     fi
 
@@ -69,6 +77,19 @@ started=$(date +'%s.%N' )
 if [[ $solver == gss ]] ; then
     glasgow_subgraph_solver --format lad --timeout ${TIMEOUT} ../../../../${pattern} ../../../../${target} > >(tee gss.out)
     retcode=$?
+elif [[ $solver == pathlad ]] ; then
+    ulimit -s 65536
+    ../../../../pathLAD/main -p ../../../../${pattern} -t ../../../../${target} -v -f -s ${TIMEOUT} > >(tee pathlad.out)
+    retcode=$?
+elif [[ $solver == vf2 ]] ; then
+    ../../../../vflib/solve_vf ../../../../${pattern} ../../../../${target} ${TIMEOUT} > >(tee solve_vf.out)
+    retcode=$?
+elif [[ $solver == ri ]] ; then
+    timeout ${TIMEOUT}s ../../../../ri/solve_ri3 mono loopgfu \
+        <(../../../../ri/lad2gfu < ../../../../${target} ) \
+        <(../../../../ri/lad2gfu < ../../../../${pattern} ) > >(tee solve_ri.out)
+    retcode=$?
+    [[ $retcode == 124 ]] && retcode=0
 else
     cp ../../../../code/si-${problem}.essence . || exit 1
     ../../../ladtoessence ../../../../${pattern} ../../../../${target} > instance.param || exit 1
