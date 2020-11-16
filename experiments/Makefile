@@ -5,17 +5,20 @@ CATTER := cat
 INSTANCES_FILE := instances.txt
 INSTANCES := $(shell cat $(INSTANCES_FILE) | $(CATTER) | cut -d' ' -f1 | if [[ $(FILTER) == -1 ]] ; then cat ; else awk "(NR %$(MODULUS)) == ($(FILTER) % $(MODULUS))" ; fi)
 TIMEOUT := 1000
-TODAY := 20201031
+TODAY := 20201105
 ALGORITHMS := \
     si-noninduced-gss-$(TODAY) \
+    si-noninduced-pathlad-$(TODAY) \
+    si-noninduced-vf2-$(TODAY) \
+    si-noninduced-ri-$(TODAY) \
     $(foreach problem,noninduced moreoddthaneven lessthreeodd parity, \
-        $(foreach preprocess,gac none, \
+        $(foreach preprocess,gac, \
             si-$(problem)-minion-preprocess-$(preprocess)-$(TODAY) \
-            $(foreach comm,checker test propagate rollback, \
+            $(foreach comm,checker test propagate rollback randomrollback, \
                 si-$(problem)-hybrid-preprocess-$(preprocess)-comm-$(comm)-$(TODAY) )))
 
+
 RESULTS := results
-PARAMS := param
 
 all : $(foreach i, $(INSTANCES), $(foreach a, $(ALGORITHMS), $(RESULTS)/$(a)/$i/run-experiment.out ))
 
