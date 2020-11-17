@@ -17,9 +17,9 @@ set format x '$10^{%T}$'
 set format y '$10^{%T}$'
 set size square
 
-sx(s,m)=stringcolumn(s)eq"NaN"?2e6:column(s)*m>=1e6?2e6:column(s)<1?1:column(s)*m
+sx(s,m)=stringcolumn(s)eq"NaN"?2e6:column(s)*m>=1e6?2e6:column(s)<1e-3?1e-3:column(s)*m
 
 plot \
-    "<head -n1 runtimes.data ; sed -e 1d runtimes.data | shuf" u (sx("minion",1000)):(sx("glasgow",1)):(column("family")==14?10:column("family")) w p lc var, \
+    "<head -n1 runtimes.data ; sed -e 1d runtimes.data | shuf" u (sx("si-noninduced-minion-preprocess-gac-20201105",1000)):(sx("si-noninduced-gss-20201105",1000)):(column("family")==14?10:column("family")) w p lc var, \
     x  w l notitle ls 0
 

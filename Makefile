@@ -9,8 +9,7 @@ GRAPHS = \
 	 gen-graph-nosideconstraints.pdf \
 	 gen-graph-oddeven.pdf \
 	 gen-graph-parity.pdf \
-	 gen-graph-mostlyodd.pdf \
-	 gen-graph-testing-versus-propagating.pdf
+	 gen-graph-mostlyodd.pdf
 
 tables : $(TABLES)
 

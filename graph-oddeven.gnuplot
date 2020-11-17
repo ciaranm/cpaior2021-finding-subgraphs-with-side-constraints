@@ -11,7 +11,7 @@ set xtics nomirror
 set ytics nomirror
 set key off
 set xrange [1e4:1e6]
-set yrange [12200:14400]
+set yrange [12200:14200]
 set logscale x
 set format x '$10^{%T}$'
 set ytics add ('$14621$' 14621) add ('' 14500)
@@ -35,10 +35,12 @@ set arrow 504 from graph 0, first lowerygap length graph -.03 angle 15 nohead lw
 set arrow 505 from graph 0, first upperygap length graph  .03 angle 15 nohead lw 2 front
 set arrow 506 from graph 0, first upperygap length graph -.03 angle 15 nohead lw 2 front
 
+set title "More odd than even"
+
 plot \
-    "runtimes.data" u (cx("minion-oddeven",1000)):(cy("minion-oddeven",1000)) smooth cum w l lw 2 ti "Minion" at end, \
-    "runtimes.data" u (cx("hybrid-oddeven",1000)):(cy("hybrid-oddeven",1000)) smooth cum w l lw 2 ti "Checking" at end, \
-    "runtimes.data" u (cx("hybrid-oddeven-always",1000)):(cy("hybrid-oddeven-always",1000)) smooth cum w l lw 2 ti '\raisebox{-1mm}{Propagating}' at end, \
-    "runtimes.data" u (cx("hybrid-oddeven-never",1000)):(cy("hybrid-oddeven-never",1000)) smooth cum w l lw 2 ti "Testing" at end, \
-    "runtimes.data" u (cx("hybrid-oddeven-rbj",1000)):(cy("hybrid-oddeven-rbj",1000)) smooth cum w l lw 2 ti '\raisebox{1mm}{Rollback}' at end
+    "runtimes.data" u (cx("si-moreoddthaneven-minion-preprocess-gac-20201105",1000)):(cy("si-moreoddthaneven-minion-preprocess-gac-20201105",1000)) smooth cum w l lw 2 lc 2 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-moreoddthaneven-hybrid-preprocess-gac-comm-checker-20201105",1000)):(cy("si-moreoddthaneven-hybrid-preprocess-gac-comm-checker-20201105",1000)) smooth cum w l lw 2 lc 3 ti "Checking" at end, \
+    "runtimes.data" u (cx("si-moreoddthaneven-hybrid-preprocess-gac-comm-propagate-20201105",1000)):(cy("si-moreoddthaneven-hybrid-preprocess-gac-comm-propagate-20201105",1000)) smooth cum w l lw 2 lc 4 ti '\raisebox{-1mm}{Propagating}' at end, \
+    "runtimes.data" u (cx("si-moreoddthaneven-hybrid-preprocess-gac-comm-rollback-20201105",1000)):(cy("si-moreoddthaneven-hybrid-preprocess-gac-comm-rollback-20201105",1000)) smooth cum w l lw 2 lc 6 ti '\raisebox{1mm}{Rollback}' at end, \
+    "runtimes.data" u (cx("si-moreoddthaneven-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)):(cy("si-moreoddthaneven-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)) smooth cum w l lw 2 lc 7 ti '\raisebox{1mm}{Rollback+}' at end
 

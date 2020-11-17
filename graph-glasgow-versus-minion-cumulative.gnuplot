@@ -16,8 +16,8 @@ set logscale x
 set format x '$10^{%T}$'
 
 ygapsize=300
-lowerygap=3350
-upperygap=8650
+lowerygap=1350
+upperygap=10650
 ygap(i)=(i<=lowerygap)?i:(i<upperygap)?NaN:(i-upperygap+lowerygap+ygapsize)
 yinvgap(i)=(i<=lowerygap)?i:(i<lowerygap+ygapsize)?NaN:(i+upperygap-lowerygap-ygapsize)
 
@@ -37,9 +37,9 @@ cx(s,m)=stringcolumn(s)eq"NaN"?1e6:column(s)*m>=1e6?1e6:column(s)*m
 cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=1e6?1e-10:1
 
 plot \
-    "runtimes.data" u (cx("glasgow",1)):(cy("glasgow",1)) smooth cum w l lw 2 ti "Glasgow" at end, \
-    "runtimes.data" u (cx("minion",1000)):(cy("minion",1000)) smooth cum w l lw 2 ti "Minion" at end, \
-    "~/cpaior2019-sbs-in-sip-paper/paper/runtimes.data" u (cx("vf2",1)):(cy("vf2",1)) smooth cum w l lw 2 ti '\raisebox{2mm}{VF2}' at end, \
-    "~/cpaior2019-sbs-in-sip-paper/paper/runtimes.data" u (cx("ri",1000)):(cy("ri",1000)) smooth cum w l lw 2 ti "RI" at end, \
-    "~/cpaior2019-sbs-in-sip-paper/paper/runtimes.data" u (cx("pathlad",1)):(cy("pathlad",1)) smooth cum w l lw 2 ti '\raisebox{-1mm}{PathLAD}' at end, \
+    "runtimes.data" u (cx("si-noninduced-gss-20201105",1000)):(cy("si-noninduced-gss-20201105",1000)) smooth cum w l lw 2 ti "Glasgow" at end, \
+    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201105",1000)):(cy("si-noninduced-minion-preprocess-gac-20201105",1000)) smooth cum w l lw 2 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-noninduced-vf2-20201105",1000)):(cy("si-noninduced-vf2-20201105",1000)) smooth cum w l lw 2 ti '\raisebox{2mm}{VF2}' at end, \
+    "runtimes.data" u (cx("si-noninduced-ri-20201105",1000)):(cy("si-noninduced-ri-20201105",1000)) smooth cum w l lw 2 ti "RI" at end, \
+    "runtimes.data" u (cx("si-noninduced-pathlad-20201105",1000)):(cy("si-noninduced-pathlad-20201105",1000)) smooth cum w l lw 2 ti '\raisebox{-1mm}{PathLAD}' at end, \
 

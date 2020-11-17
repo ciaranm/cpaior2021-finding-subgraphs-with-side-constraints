@@ -12,7 +12,7 @@ basicstyle=\small\ttfamily,
 mathescape,
 escapeinside={(*}{*)},
 numbers=none,
-keywordstyle=\bfseries,  %\color{red}
+keywordstyle=\bfseries\color{blue},
 keywords = {language, Essence, given, letting, find, such, that,
             bool, int, matrix, enum, variant, record, set, mset,
             sequence, function, relation, partition, 
@@ -28,7 +28,7 @@ breaklines=true,
 breakatwhitespace=false,
 }
 
-% \usepackage{showframe}
+\usepackage{showframe}
 
 \title{Subgraph Isomorphism With Side Constraints}
 \author{
@@ -320,7 +320,7 @@ and adds in new constraints for each query.
 
 \begin{figure}[p]
     \includegraphics{gen-graph-nosideconstraints.pdf}\hfill\includegraphics{gen-graph-oddeven.pdf}
-    \medskip
+    \bigskip
     \includegraphics{gen-graph-mostlyodd.pdf}\hfill\includegraphics{gen-graph-parity.pdf}
     \caption{Comparing different approaches to hybrid solving. On the top row, ``no side
     constraints'' then with the ``more odd target vertices than even target vertices'' side
