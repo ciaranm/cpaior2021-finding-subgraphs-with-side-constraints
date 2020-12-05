@@ -1,0 +1,15 @@
+given l, e : int
+letting L be domain int(1..l)
+letting E be domain int(1..e)
+given p, t : int
+letting P be domain int(1..p)
+letting T be domain int(1..t)
+
+given pat : function (P, P) --> E
+given tgt : function (T, T) --> E
+given plab : function (total) P --> L
+given tlab : function (total) T --> L
+
+find f : function (total, injective) P --> T
+such that forAll a : P .  plab(a) = tlab(f(a))
+such that forAll ((a, b), abPat) in pat . ((f(a), f(b)), abPat) in toSet(tgt)
