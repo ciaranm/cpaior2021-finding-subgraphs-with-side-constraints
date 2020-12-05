@@ -10,7 +10,7 @@ set grid
 set xtics nomirror
 set ytics nomirror
 set key off
-set xrange [1e3:1e6]
+set xrange [1e4:1e6]
 set yrange [13500:14621]
 set logscale x
 set format x '$10^{%T}$'

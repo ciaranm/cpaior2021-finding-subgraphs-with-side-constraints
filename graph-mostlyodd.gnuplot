@@ -3,6 +3,8 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
+load "inferno.pal"
+
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
 set border 3
@@ -11,7 +13,7 @@ set xtics nomirror
 set ytics nomirror
 set key off
 set xrange [1e4:1e6]
-set yrange [12000:13700]
+set yrange [12000:14200]
 set logscale x
 set format x '$10^{%T}$'
 
@@ -20,7 +22,7 @@ cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=1e6?1e-10:1
 
 ygapsize=60
 lowerygap=12240
-upperygap=13100
+upperygap=13300
 ygap(i)=(i<=lowerygap)?i:(i<upperygap)?NaN:(i-upperygap+lowerygap+ygapsize)
 yinvgap(i)=(i<=lowerygap)?i:(i<lowerygap+ygapsize)?NaN:(i+upperygap-lowerygap-ygapsize)
 
@@ -37,9 +39,13 @@ set arrow 506 from graph 0, first upperygap length graph -.03 angle 15 nohead lw
 set title "Less than three odd"
 
 plot \
-    "runtimes.data" u (cx("si-lessthreeodd-minion-preprocess-gac-20201105",1000)):(cy("si-lessthreeodd-minion-preprocess-gac-20201105",1000)) smooth cum w l lc 2 lw 2 ti "Minion" at end, \
-    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-checker-20201105",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-checker-20201105",1000)) smooth cum w l lc 3 lw 2 ti "Checking" at end, \
-    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-propagate-20201105",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-propagate-20201105",1000)) smooth cum w l lc 4 lw 2 ti 'Propagating' at end, \
-    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-rollback-20201105",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-rollback-20201105",1000)) smooth cum w l lc 6 lw 2 ti 'Rollback' at end, \
-    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)) smooth cum w l lc 7 lw 2 ti 'Rollback+' at end, \
+    "runtimes.data" u (cx("si-lessthreeodd-gss-20201201",1000)):(cy("si-lessthreeodd-gss-20201201",1000)) smooth cum w l ls 1 ti "Glasgow" at end, \
+    "runtimes.data" u (cx("si-lessthreeodd-minion-preprocess-gac-20201201",1000)):(cy("si-lessthreeodd-minion-preprocess-gac-20201201",1000)) smooth cum w l ls 3 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-lessthreeoddoz-minion-preprocess-gac-20201203",1000)):(cy("si-lessthreeoddoz-minion-preprocess-gac-20201203",1000)) smooth cum w l ls 3 dt ".", \
+    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-checker-20201201",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-checker-20201201",1000)) smooth cum w l ls 5 ti "Checking" at end, \
+    "runtimes.data" u (cx("si-lessthreeoddoz-hybrid-preprocess-gac-comm-checker-20201203",1000)):(cy("si-lessthreeoddoz-hybrid-preprocess-gac-comm-checker-20201203",1000)) smooth cum w l ls 5 dt ".", \
+    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-propagate-20201201",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-propagate-20201201",1000)) smooth cum w l ls 6 ti 'Propagating' at end, \
+    "runtimes.data" u (cx("si-lessthreeoddoz-hybrid-preprocess-gac-comm-propagate-20201203",1000)):(cy("si-lessthreeoddoz-hybrid-preprocess-gac-comm-propagate-20201203",1000)) smooth cum w l ls 6 dt ".", \
+    "runtimes.data" u (cx("si-lessthreeodd-hybrid-preprocess-gac-comm-rollback-20201201",1000)):(cy("si-lessthreeodd-hybrid-preprocess-gac-comm-rollback-20201201",1000)) smooth cum w l ls 8 lw 2 ti 'Rollback' at end, \
+    "runtimes.data" u (cx("si-lessthreeoddoz-hybrid-preprocess-gac-comm-rollback-20201203",1000)):(cy("si-lessthreeoddoz-hybrid-preprocess-gac-comm-rollback-20201203",1000)) smooth cum w l ls 8 dt "."
 

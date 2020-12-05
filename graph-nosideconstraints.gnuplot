@@ -3,6 +3,8 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
+load "inferno.pal"
+
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
 set border 3
@@ -19,6 +21,29 @@ set ytics add ('$14621$' 14621) add ('' 14500)
 ygapsize=60
 lowerygap=1000
 upperygap=12060
+lowerygap2=12500
+upperygap2=13860
+
+# ygap(i)= \
+#     (i<=lowerygap) ? \
+#         i : \
+#         (i<upperygap) ? \
+#             NaN : \
+#             (i<=lowerygap2) ? \
+#                 (i-upperygap+lowerygap+ygapsize) : \
+#                 (i<upperygap2) ? \
+#                     NaN : \
+#                     (i-upperygap+lowerygap-upperygap2+lowerygap2+ygapsize+ygapsize)
+# 
+# yinvgap(i)= \
+#     (i<=lowerygap) ? \
+#         i : \
+#         (i<lowerygap+ygapsize) ? \
+#             NaN : \
+#             (i+upperygap-lowerygap-ygapsize)
+# 
+# print yinvgap(ygap(15000))
+
 ygap(i)=(i<=lowerygap)?i:(i<upperygap)?NaN:(i-upperygap+lowerygap+ygapsize)
 yinvgap(i)=(i<=lowerygap)?i:(i<lowerygap+ygapsize)?NaN:(i+upperygap-lowerygap-ygapsize)
 
@@ -38,10 +63,13 @@ cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=1e6?1e-10:1
 set title "No side constraints"
 
 plot \
-    "runtimes.data" u (cx("si-noninduced-gss-20201105",1000)):(cy("si-noninduced-gss-20201105",1000)) smooth cum w l lc 1 lw 2 ti "Glasgow" at end, \
-    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201105",1000)):(cy("si-noninduced-minion-preprocess-gac-20201105",1000)) smooth cum w l lc 2 lw 2 ti "Minion" at end, \
-    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-checker-20201105",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-checker-20201105",1000)) smooth cum w l lc 3 lw 2 ti "Checking" at end, \
-    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201105",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201105",1000)) smooth cum w l lc 4 lw 2 ti '\raisebox{-1mm}{Propagating}' at end, \
-    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201105",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201105",1000)) smooth cum w l lc 6 lw 2 ti '\raisebox{1mm}{Rollback}' at end, \
-    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-randomrollback-20201105",1000)) smooth cum w l lc 7 lw 2 ti '\raisebox{1mm}{Rollback+}' at end, \
+    "runtimes.data" u (cx("si-noninduced-gss-20201201",1000)):(cy("si-noninduced-gss-20201201",1000)) smooth cum w l ls 1 ti "Glasgow" at end, \
+    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201201",1000)):(cy("si-noninduced-minion-preprocess-gac-20201201",1000)) smooth cum w l ls 3 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-noninducedoz-minion-preprocess-gac-20201203",1000)):(cy("si-noninducedoz-minion-preprocess-gac-20201203",1000)) smooth cum w l ls 3 dt ".", \
+    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-checker-20201201",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-checker-20201201",1000)) smooth cum w l ls 5 ti "Checking" at end, \
+    "runtimes.data" u (cx("si-noninducedoz-hybrid-preprocess-gac-comm-checker-20201203",1000)):(cy("si-noninducedoz-hybrid-preprocess-gac-comm-checker-20201203",1000)) smooth cum w l ls 5 dt ".", \
+    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201201",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201201",1000)) smooth cum w l ls 6 ti '\raisebox{-1mm}{Propagating}' at end, \
+    "runtimes.data" u (cx("si-noninducedoz-hybrid-preprocess-gac-comm-propagate-20201203",1000)):(cy("si-noninducedoz-hybrid-preprocess-gac-comm-propagate-20201203",1000)) smooth cum w l ls 6 dt ".", \
+    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201201",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201201",1000)) smooth cum w l ls 8 ti '\raisebox{1mm}{Rollback}' at end, \
+    "runtimes.data" u (cx("si-noninducedoz-hybrid-preprocess-gac-comm-rollback-20201203",1000)):(cy("si-noninducedoz-hybrid-preprocess-gac-comm-rollback-20201203",1000)) smooth cum w l ls 8 dt "."
 
