@@ -12,6 +12,9 @@ MS_SR_OPTS=
 MS_GSS_OPTS=
 if echo ${alg} | grep -q -- '-gss-' ; then
     solver=gss
+    if echo ${alg} | grep -q -- '-parallel-' ; then
+        MS_GSS_OPTS="--parallel"
+    fi
 elif echo ${alg} | grep -q -- '-pathlad'- ; then
     solver=pathlad
 elif echo ${alg} | grep -q -- '-vf2'- ; then
@@ -24,15 +27,15 @@ else
     elif echo ${alg} | grep -q -- '-hybrid-' ; then
         solver=hybrid
         if echo ${alg} | grep -q -- '-comm-checker-' ; then
-            MS_GSS_OPTS='--propagate-using-lackey never'
+            MS_GSS_OPTS="--propagate-using-lackey never $MS_GSS_OPTS"
         elif echo ${alg} | grep -q -- '-comm-test-' ; then
-            MS_GSS_OPTS='--propagate-using-lackey never --send-partials-to-lackey'
+            MS_GSS_OPTS="--propagate-using-lackey never --send-partials-to-lackey $MS_GSS_OPTS"
         elif echo ${alg} | grep -q -- '-comm-propagate-' ; then
-            MS_GSS_OPTS='--propagate-using-lackey always --send-partials-to-lackey'
+            MS_GSS_OPTS="--propagate-using-lackey always --send-partials-to-lackey $MS_GSS_OPTS"
         elif echo ${alg} | grep -q -- '-comm-rollback-' ; then
-            MS_GSS_OPTS='--propagate-using-lackey root-and-backjump'
+            MS_GSS_OPTS="--propagate-using-lackey root-and-backjump $MS_GSS_OPTS"
         elif echo ${alg} | grep -q -- '-comm-randomrollback-' ; then
-            MS_GSS_OPTS='--propagate-using-lackey random-and-backjump'
+            MS_GSS_OPTS="--propagate-using-lackey random-and-backjump $MS_GSS_OPTS"
         fi
     fi
 
@@ -75,7 +78,12 @@ kill_descendants ()
 retcode=x
 started=$(date +'%s.%N' )
 if [[ $solver == gss ]] ; then
-    glasgow_subgraph_solver --format lad --timeout ${TIMEOUT} ../../../../${pattern} ../../../../${target} > >(tee gss.out)
+    GSS_PROBLEM_OPTIONS=
+    [[ $problem == parity ]] && GSS_PROBLEM_OPTIONS="--internal-side-constraints parity"
+    [[ $problem == betterparity ]] && GSS_PROBLEM_OPTIONS="--internal-side-constraints parity"
+    [[ $problem == moreoddthaneven ]] && GSS_PROBLEM_OPTIONS="--internal-side-constraints moreodd"
+    [[ $problem == lessthreeodd ]] && GSS_PROBLEM_OPTIONS="--internal-side-constraints lessthreeodd"
+    glasgow_subgraph_solver --format lad --timeout ${TIMEOUT} ../../../../${pattern} ../../../../${target} $GSS_PROBLEM_OPTIONS $MS_GSS_OPTS > >(tee gss.out)
     retcode=$?
 elif [[ $solver == pathlad ]] ; then
     ulimit -s 65536
