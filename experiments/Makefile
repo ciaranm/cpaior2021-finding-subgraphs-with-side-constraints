@@ -5,18 +5,28 @@ CATTER := cat
 INSTANCES_FILE := instances.txt
 INSTANCES := $(shell cat $(INSTANCES_FILE) | $(CATTER) | cut -d' ' -f1 | if [[ $(FILTER) == -1 ]] ; then cat ; else awk "(NR %$(MODULUS)) == ($(FILTER) % $(MODULUS))" ; fi)
 TIMEOUT := 1000
-TODAY := 20201105
+TODAY := 20201201
+TOMORROW := 20201203
+YESTERDAY := 20201117
+
 ALGORITHMS := \
     si-noninduced-gss-$(TODAY) \
-    si-noninduced-pathlad-$(TODAY) \
-    si-noninduced-vf2-$(TODAY) \
-    si-noninduced-ri-$(TODAY) \
+    si-parity-gss-$(TODAY) \
+    si-moreoddthaneven-gss-$(TODAY) \
+    si-lessthreeodd-gss-$(TODAY) \
     $(foreach problem,noninduced moreoddthaneven lessthreeodd parity, \
         $(foreach preprocess,gac, \
             si-$(problem)-minion-preprocess-$(preprocess)-$(TODAY) \
-            $(foreach comm,checker test propagate rollback randomrollback, \
-                si-$(problem)-hybrid-preprocess-$(preprocess)-comm-$(comm)-$(TODAY) )))
-
+            $(foreach comm,checker propagate rollback, \
+                si-$(problem)-hybrid-preprocess-$(preprocess)-comm-$(comm)-$(TODAY) ))) \
+    si-noninduced-pathlad-$(YESTERDAY) \
+    si-noninduced-vf2-$(YESTERDAY) \
+    si-noninduced-ri-$(YESTERDAY) \
+    $(foreach problem,noninducedoz moreoddthanevenoz lessthreeoddoz parityoz, \
+        $(foreach preprocess,gac, \
+            si-$(problem)-minion-preprocess-$(preprocess)-$(TOMORROW) \
+            $(foreach comm,checker propagate rollback, \
+                si-$(problem)-hybrid-preprocess-$(preprocess)-comm-$(comm)-$(TOMORROW) ))) \
 
 RESULTS := results
 
