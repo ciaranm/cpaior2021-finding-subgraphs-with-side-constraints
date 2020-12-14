@@ -3,6 +3,8 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
+load "inferno.pal"
+
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
 set border 3
@@ -10,10 +12,11 @@ set grid
 set xtics nomirror
 set ytics nomirror
 set key off
-set xrange [1:1e6]
+set xrange [1:3600e3]
 set yrange [0:14621] noextend
 set logscale x
 set format x '$10^{%T}$'
+set xtics add ('~~1h' 3600e3)
 
 ygapsize=300
 lowerygap=1350
@@ -33,13 +36,13 @@ set arrow 504 from graph 0, first lowerygap length graph -.03 angle 15 nohead lw
 set arrow 505 from graph 0, first upperygap length graph  .03 angle 15 nohead lw 2 front
 set arrow 506 from graph 0, first upperygap length graph -.03 angle 15 nohead lw 2 front
 
-cx(s,m)=stringcolumn(s)eq"NaN"?1e6:column(s)*m>=1e6?1e6:column(s)*m
-cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=1e6?1e-10:1
+cx(s,m)=stringcolumn(s)eq"NaN"?3600e3:column(s)*m>=3600e3?3600e3:column(s)*m
+cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=3600e3?1e-10:1
 
 plot \
-    "runtimes.data" u (cx("si-noninduced-gss-20201201",1000)):(cy("si-noninduced-gss-20201201",1000)) smooth cum w l lw 2 ti "Glasgow" at end, \
-    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201201",1000)):(cy("si-noninduced-minion-preprocess-gac-20201201",1000)) smooth cum w l lw 2 ti "Minion" at end, \
-    "runtimes.data" u (cx("si-noninduced-vf2-20201117",1000)):(cy("si-noninduced-vf2-20201117",1000)) smooth cum w l lw 2 ti '\raisebox{2mm}{VF2}' at end, \
-    "runtimes.data" u (cx("si-noninduced-ri-20201117",1000)):(cy("si-noninduced-ri-20201117",1000)) smooth cum w l lw 2 ti "RI" at end, \
-    "runtimes.data" u (cx("si-noninduced-pathlad-20201117",1000)):(cy("si-noninduced-pathlad-20201117",1000)) smooth cum w l lw 2 ti '\raisebox{-1mm}{PathLAD}' at end, \
+    "runtimes.data" u (cx("si-noninduced-gss-20201208",1000)):(cy("si-noninduced-gss-20201208",1000)) smooth cum w l ls 1 ti "Glasgow" at end, \
+    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201208",1000)):(cy("si-noninduced-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-noninduced-vf2-20201208",1000)):(cy("si-noninduced-vf2-20201208",1000)) smooth cum w l ls 5 ti '\raisebox{0mm}{VF2}' at end, \
+    "runtimes.data" u (cx("si-noninduced-ri-20201208",1000)):(cy("si-noninduced-ri-20201208",1000)) smooth cum w l ls 6 ti "RI" at end, \
+    "runtimes.data" u (cx("si-noninduced-pathlad-20201208",1000)):(cy("si-noninduced-pathlad-20201208",1000)) smooth cum w l ls 7 ti '\raisebox{-1mm}{PathLAD}' at end, \
 
