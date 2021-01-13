@@ -4,7 +4,8 @@
 
 \usepackage{tikz}
 \usetikzlibrary{shapes, positioning, decorations.text}
-\usepackage{cleveref}
+
+\usepackage{todonotes}
 
 \usepackage{listings}
 \lstset{
@@ -45,6 +46,9 @@ Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
     Algorithmicists Anonymous, Scotland \and
     King's College London, England
 }
+
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 \crefname{Figure}{Figure}{Figures}
 \crefname{figure}{figure}{figures}
@@ -441,10 +445,26 @@ some actual simple experiments on them?
 
 \subsection{Retyping Problems}\label{section:typegraphs}
 
-A \emph{typed graph} is a kind of labelled graph where the labels also carry a graph structure
-??cite. In general, mappings between typed graphs must preserve the label structure, but here we
-will be looking at a problem variation involving relabelling which occurs in ??application. We may
-describe typed graph subisomorphism problems in Essence as follows. As before, we are given a
+  In graph theory~\cite{Ehrig+06}, a graph is given by a set of vertices and a set of edges and two functions giving the source and target node for an edge, respectively.
+  Morphisms between graphs map vertices to vertices and edges to edges, preserving the structure of the graphs.
+  Often, we are interested in typed graphs.
+  Here, we assume a dedicated graph TG---the type graph---to be given.
+  Then we can define typed graphs as graphs for which a morphism into TG has been defined.
+  In effect, we are labelling each vertex and edge with its corresponding type.
+  
+  For typed graphs, morphisms between the graphs are typically defined between graphs typed over the same type graph, but there are situations where we are interested in mapping between graphs typed over different type graphs.
+  We describe an example scenario in~\cite{Duran+12,Duran+17}, where we compose graph transformation systems by defining morphisms between the rules constituting the respective transformation systems.
+  In this case, the source and target transformation systems will normally have different type graphs and we will first establish a morphism between the two type graphs.
+  Mappings between the various graphs making up the rules then need to preserve structure and typing subject to the morphism between type graphs.
+  We have developed tool support for this approach to specification composition.\footnote{\url{https://github.com/gts-morpher/gts_morpher}}
+  A key objective is to minimise the amount of specification that needs to be written.
+  For example, the tool allows morphisms between graph transformation systems to be only partially specified and then automatically completes the full morphism, if it can do so unambiguously.
+  This requires solving a sub-isomorphism problem.
+
+%A \emph{typed graph} is a kind of labelled graph where the labels also carry a graph structure
+%??cite. In general, mappings between typed graphs must preserve the label structure, but here we
+%will be looking at a problem variation involving relabelling which occurs in ??application. 
+We may describe typed graph subisomorphism problems in Essence as follows. As before, we are given a
 pattern graph and a target graph, both of which carry labels; we will draw the vertex labels from
 different sets, to emphasise
 the relabelling.
