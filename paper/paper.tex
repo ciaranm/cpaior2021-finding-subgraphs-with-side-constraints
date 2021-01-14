@@ -532,9 +532,22 @@ because we can map pattern vertex 3 to target vertex 5 through retyping, but map
 to target vertex 4 would not respect the type graph structure.
 
 \subsection{Temporal Subgraph Problems}\label{section:temporalgraphs}
+In a \emph{temporal graph}, edges are labelled with timestamps that denote times when edges are active---here we use
+integers as timestamps.  Including information on the timing of edges substantially increases the modelling power of these graphs, allowing them to 
+more accurately reflect the structure and dynamics of a wide variety of real-world systems (e.g. trade networks, changing contact networks, transport networks), 
+and address optimisation questions in which the timing of edges is fundamental.  
 
-In a \emph{temporal graph}, edges are labelled with some kind of timestamp---here we will use
-integers. Temporal pattern matching and counting has applications in ??. There are at least three
+As algorithms and formalisms have become available for temporal graphs, examples of their application have become widespread \cite{holmeReview}, 
+notably including applications within epidemiology \cite{temporalEpi} and computational social science \cite{socialTemporalCite}.
+Because the use of temporal graphs has spread beyond theoretical researchers, the ability to rapidly define and experiment with 
+new problem definitions and constraints is valuable - practitioners are unlikely to define bespoke algorithms for novel problems as they arise.
+
+%Temporal graphs 
+% why being able to try new constraints easily is useful for practitioners
+
+%In a \emph{temporal graph}, edges are labelled with some kind of timestamp---here we will use
+%integers. Temporal pattern matching and counting has applications in ??. 
+There are at least three
 common kinds of temporal subgraph isomorphism. In an \emph{exact} subisomorphism, times are simply
 labels that must match exactly. If we look at \cref{figure:littlegraphs}, now ignoring vertex labels
 but using the edge labels to carry the timestamps,
