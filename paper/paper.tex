@@ -333,7 +333,9 @@ searches as directed. It then communicates its success or failure state, and any
 the subgraph solver. This approach is reasonably solver-agnostic, and adding support for different
 CP solvers (or non-CP solvers) should not be difficult.
 
-?? How does the Essence / Conjure side work?
+Problems specified in Essence are converted to concrete models that can be solved by a CP solver like Minion using Conjure and Savile Row.
+Running Conjure with a special flag (--graph-solver) instructs it to generate an extra file for the consumption of the graph solver, in addition to a CP model written in Essence Prime.
+The model is then converted to Minion input. The graph solver file includes the mappings between the nodes and the edges in the graph to the names of the decision variables used in the model. 
 
 \subsection{Design Experiments}
 
