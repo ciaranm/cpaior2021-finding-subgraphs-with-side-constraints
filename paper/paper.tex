@@ -302,8 +302,9 @@ require the CP solver to be aware of all of the graph constraints. We could ther
 solver as a \emph{solution checker}. Whenever the subgraph solver finds a solution, it will pass it
 to the CP solver, which will treat the solution as a set of equality constraints. The CP solver will
 then attempt to find a satisfying assignment. If the CP solver does not have any additional
-variables, this is equivalent to simply checking that the remaining constraints hold, but otherwise
-it can involve search. For a decision problem, the CP solver then communicates back to the subgraph
+variables, this is equivalent to simply checking that the remaining constraints hold, but in general
+this will require search.
+For a decision problem, the CP solver then communicates back to the subgraph
 solver either ``yes, this is a valid solution'', or ``no, reject this solution and keep going''. If
 we are solving a counting or enumeration problem, the CP solver must find \emph{all} solutions and
 communicate this back to the subgraph solver.
@@ -324,18 +325,28 @@ the difference between these approaches.
 
 \subsection{Implementation}
 
+Problems are specified in Essence and then are converted to concrete models that can be solved by
+a CP solver (in our experiments Minion) using Conjure and Savile Row.
+Running Conjure with a special flag (--graph-solver) instructs it to generate an extra file which
+describes how the variables representing the graph is represented in the SavileRow input (known
+as Essence'). This is used
+by the graph solver so it can map between its internal state and the variables in Essence'.
+SavileRow converts the graph model to Minion input, and this conversion contains information which
+allows Minion to map its internal state back to the Essence' given to SavileRow. The graph solver
+and Minion then communicate mappings between the nodes and edges in the graph using the
+identifiers in the Essence' representation of the problem.
+
 To enable communication between the two solvers, we use FIFOs (named pipes), and a simple text-based
 protocol.  Both solvers are run and initialised, and then the subgraph solver proceeds as normal,
-whilst the CP solver waits to be given commands. The subgraph solver thens communicate its trail
-or a candidate solution as a set of assignment constraints, which the CP solver reads. The CP solver
-clones its initial model, adds in the given set of constraints, and then either propagates or
-searches as directed. It then communicates its success or failure state, and any deletions, back to
-the subgraph solver. This approach is reasonably solver-agnostic, and adding support for different
-CP solvers (or non-CP solvers) should not be difficult.
+whilst the CP solver waits to be given commands. The subgraph solver then communicates its trail
+or a candidate solution as a set of assignment constraints to the CP solver. The CP solver
+then sets these assignments its state and then either performs a single propagation, or
+complete search, as directed. When finished the solver communicates its success or failure state,
+and any deletions (if requested), back to the subgraph solver and reverts any changes made by
+setting the assignments. This approach is designed to be
+solver-agnostic, and adding support for different CP solvers (or non-CP solvers) is simple, as long
+as they support performing a search or propagation from a given set of assignments.
 
-Problems specified in Essence are converted to concrete models that can be solved by a CP solver like Minion using Conjure and Savile Row.
-Running Conjure with a special flag (--graph-solver) instructs it to generate an extra file for the consumption of the graph solver, in addition to a CP model written in Essence Prime.
-The model is then converted to Minion input. The graph solver file includes the mappings between the nodes and the edges in the graph to the names of the decision variables used in the model. 
 
 \subsection{Design Experiments}
 
