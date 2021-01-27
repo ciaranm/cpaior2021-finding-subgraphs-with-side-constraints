@@ -3,7 +3,7 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
-load "inferno.pal"
+load "viridis.pal"
 
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
@@ -65,8 +65,8 @@ set title "No side constraints"
 
 plot \
     "runtimes.data" u (cx("si-noninduced-gss-20201208",1000)):(cy("si-noninduced-gss-20201208",1000)) smooth cum w l ls 1 ti '\raisebox{2.2mm}{Glasgow}' at end, \
-    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201208",1000)):(cy("si-noninduced-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201208",1000)):(cy("si-noninduced-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti "Essence" at end, \
     "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-checker-20201208",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-checker-20201208",1000)) smooth cum w l ls 5 ti '\raisebox{0.3mm}{Checking \&}' at end, \
     "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201208",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-propagate-20201208",1000)) smooth cum w l ls 6 ti '\raisebox{-0.5mm}{Propagating}' at end, \
-    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201208",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201208",1000)) smooth cum w l ls 7 ti '\raisebox{-1.5mm}{~~~Rollback}' at end, \
+    "runtimes.data" u (cx("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201208",1000)):(cy("si-noninduced-hybrid-preprocess-gac-comm-rollback-20201208",1000)) smooth cum w l ls 8 ti '\raisebox{-1.5mm}{~~~Rollback}' at end, \
 

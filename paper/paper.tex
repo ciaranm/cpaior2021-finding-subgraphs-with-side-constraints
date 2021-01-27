@@ -35,9 +35,12 @@ breakatwhitespace=false,
 Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
 
 \author{
-    \"Ozg\"ur Akg\"un\inst{1} \and Jessica Enright\inst{2} \and Christopher
-    Jefferson\inst{1} \and Ciaran McCreesh\inst{2} \and Patrick
-    Prosser\inst{3} \and Steffen Zschaler\inst{4} \\
+    \"Ozg\"ur Akg\"un\inst{1}\orcidID{0000-0003-4460-6912} \and Jessica
+    Enright\inst{2}\orcidID{0000-0002-0266-3292} \and Christopher
+    Jefferson\inst{1}\orcidID{0000-0003-2979-5989} \and Ciaran
+    McCreesh\inst{2}\orcidID{0000-0002-6106-4871} \and Patrick
+    Prosser\inst{3}\orcidID{0000-0003-4460-6912} \and Steffen
+    Zschaler\inst{4}\orcidID{0000-0001-9062-6637} \\
 }
 \authorrunning{\"O. Akgun et al.}
 \institute{
@@ -60,29 +63,33 @@ Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
 \begin{abstract}
     The subgraph isomorphism problem is to find a small ``pattern'' graph inside a larger ``target''
     graph. There are excellent dedicated solvers for this problem, but they require substantial
-    programming effort to handle complex side constraints; however, general purpose constraint
-    solvers struggle on more difficult graph instances. We show how to combine the state of the art
-    Glasgow Subgraph Solver with the Minion constraint programming solver to get a ``subgraphs modulo
-    theories'' solver that is both performant and flexible. We also show how such an approach can be
-    driven by the Essence high level modelling language, giving ease of modelling to non-expert
-    users. We give practical examples involving
-    temporal graphs, typed graphs from software engineering, and costed subgraph isomorphism
-    problems.
+    programming effort to handle the complex side constraints that often occur in practical
+    applications of the problem; however, general purpose constraint solvers struggle on more
+    difficult graph instances. We show how to combine the state of the art Glasgow Subgraph Solver
+    with the Minion constraint programming solver to get a ``subgraphs modulo theories'' solver that
+    is both performant and flexible. We also show how such an approach can be driven by the Essence
+    high level modelling language, giving ease of modelling and prototyping to non-expert users. We
+    give practical examples involving temporal graphs, typed graphs from software engineering, and
+    costed subgraph isomorphism problems.
 \end{abstract}
 
 \section{Introduction}
 
-Finding or counting small ``pattern'' graphs inside larger ``target'' graphs are widely applicable
-hard problems, with applications including ??. This has led to the development of numerous dedicated
+Finding small ``pattern'' graphs inside larger ``target'' graphs is a widely applicable
+hard problem, with applications including compilers \cite{DBLP:conf/cp/BlindellLCS15},
+bioinformatics \cite{DBLP:journals/bmcbi/BonniciGPSF13,Elhesha2021}, chemistry \cite{o:Regin95},
+malware detection \cite{DBLP:conf/dimva/BruschiMM06}, pattern recognition
+\cite{DBLP:journals/ijprai/FoggiaPV14}, and the design of mechanical locks
+\cite{DBLP:journals/siamrev/VomelLBF17}.  This has led to the development of numerous dedicated
 algorithms, with the Glasgow Subgraph Solver \cite{DBLP:conf/gg/McCreeshP020} being the current
 state of the art \cite{DBLP:conf/gbrpr/Solnon19}. However, practitioners are often interested in
 versions of the problem with additional restrictions, or side constraints. Some of these, such as
 exact vertex labelling schemes, are trivial to include in a dedicated solver, but others currently
 require either extensive programming or inefficient post-processing. This paper explores a different
-approach: by allowing the Glasgow Subgraph Solver to use the Minion constraint programming (CP) solver
-\cite{DBLP:conf/ecai/GentJM06} for side constraints, we achieve both the performance only a
-dedicated solver can offer, with the flexibility of a full CP toolkit. This
-hybrid modelling system can be driven by the Essence high level modelling language
+approach: by allowing the Glasgow Subgraph Solver to use the Minion constraint programming (CP)
+solver \cite{DBLP:conf/ecai/GentJM06} for side constraints, we achieve both the performance only a
+dedicated solver can offer, with the flexibility of a full CP toolkit. This hybrid modelling system
+can be driven by the Essence high level modelling language
 \cite{DBLP:journals/constraints/FrischHJHM08} and the Conjure toolchain, making it accessible to
 non-specialists.
 
@@ -216,25 +223,39 @@ And Conjure will now find us a single solution,
 (1 --> 2, 2 --> 3, 3 --> 4)
 \end{lstlisting}
 As we will see in \cref{section:problems}, supporting other problem variants and constraints is
-similarly straightforward, even if auxiliary variables are required. %For example, if instead we
-%want to allow relabelling on vertex labels (which
-%is typically not supported by dedicated solvers), we could do the following:
-%\begin{lstlisting}
-%find r : function (total, injective) L --> L
-%such that forAll a : P .  r(plab(a)) = tlab(f(a))
-%\end{lstlisting}
-%and we would find two additional solutions,
-%\begin{lstlisting}
-%(1 --> 1, 2 --> 3, 3 --> 5)
-%(1 --> 2, 2 --> 3, 3 --> 5)
-%\end{lstlisting}
-%and if we removed the injective keyword for the relabelling, we would find a fifth mapping
-%\begin{lstlisting}
-%(1 --> 2, 2 --> 3, 3 --> 1)
-%\end{lstlisting}
-%We return to relabelling in \cref{section:typegraphs}.
+similarly straightforward, even if auxiliary variables are required. For example, if instead we want
+to allow relabelling on vertex labels (which is typically not supported by dedicated solvers), we
+could do the following:
+\begin{lstlisting}
+find r : function (total, injective) L --> L
+such that forAll a : P .  r(plab(a)) = tlab(f(a))
+\end{lstlisting}
+and we would find two additional solutions,
+\begin{lstlisting}
+(1 --> 1, 2 --> 3, 3 --> 5)
+(1 --> 2, 2 --> 3, 3 --> 5)
+\end{lstlisting}
+and if we removed the injective keyword for the relabelling, we would find a fifth mapping
+\begin{lstlisting}
+(1 --> 2, 2 --> 3, 3 --> 1)
+\end{lstlisting}
+We return to relabelling in \cref{section:typegraphs}.
 
 \subsection{Preliminary Experiments and Motivation}
+
+Unfortunately, whilst elegant and flexible, the performance of this approach leaves a lot to be
+desired on basic subgraph isomorphism instances.  The computational experiments in this paper are
+performed on a cluster of machines with dual Intel Xeon E5-2697A v4 processors and 512GBytes RAM
+running Ubuntu 18.04.  We will be using the 14,621 unlabelled, undirected instances from
+Solnon's benchmark suite\footnote{https://perso.liris.cnrs.fr/christine.solnon/SIP.html}. This
+benchmark suite was originally designed for algorithm portfolios work
+\cite{DBLP:conf/lion/KotthoffMS16}, and brings together several collections of application and
+randomly-generated instances with varying difficulties and solution counts (including many
+unsatisfiable instances). Some of the instances have up to 900 vertices and 14,420 edges in patterns
+and up to 6,671 vertices and 209,000 edges in targets. These lead to rather large models, by
+constraint programming standards: the largest generated table constraint has nearly half a million
+entries. However, these sizes are realistic from an applications perspective, and it would be
+desirable if solvers could handle even larger target graphs.
 
 \begin{figure}[tb]
 \includegraphics{gen-graph-glasgow-versus-minion-cumulative.pdf}\hfill\includegraphics*{gen-graph-glasgow-versus-minion-scatter.pdf}
@@ -245,22 +266,10 @@ similarly straightforward, even if auxiliary variables are required. %For exampl
     timeouts.}\label{figure:solvers}
 \end{figure}
 
-Unfortunately, whilst elegant and flexible, the performance of this approach is rather terrible on
-basic subgraph isomorphism instances.  The computational experiments in this paper are performed on
-a cluster of machines with dual Intel Xeon E5-2697A v4 processors and 512GBytes RAM running Ubuntu
-18.04.  Initially, we will be using the 14,621 unlabelled, undirected instances from Solnon's
-benchmark suite\footnote{https://perso.liris.cnrs.fr/christine.solnon/SIP.html}. This benchmark
-suite was originally designed for algorithm portfolios work \cite{DBLP:conf/lion/KotthoffMS16}, and
-brings together several collections of application and randomly-generated instances with varying
-difficulties and solution counts (including many unsatisfiable instances). Some of the instances
-have up to 900 vertices and 14,420 edges in patterns and up to 6,671 vertices and 209,000 edges in
-targets. These lead to rather large models, by constraint programming standards: the largest
-generated table constraint has nearly half a million entries.
-
 In \cref{figure:solvers} we plot the cumulative number of instances solved over time for the
 non-induced decision problem, comparing the high level approach to the Glasgow Subgraph Solver
 \cite{DBLP:conf/gg/McCreeshP020} and PathLAD \cite{DBLP:conf/lion/KotthoffMS16} (the two strongest
-CP approaches), and to VF2 \cite{DBLP:journals/pami/CordellaFSV04} and RI
+CP-inspired approaches), and to VF2 \cite{DBLP:journals/pami/CordellaFSV04} and RI
 \cite{DBLP:journals/bmcbi/BonniciGPSF13} (simpler algorithms which perform well on easy instances).
 The high level approach has very slow startup times (which is to be expected as it involves
 launching a Java virtual machine and reading in a very large table constraint), but much more
@@ -275,13 +284,36 @@ applications, but we do not want to have to abandon the performance that dedicat
 on hard instances. In \cref{section:hybrid} we evaluate several ways of using a CP solver in
 conjunction with the Glasgow Subgraph Solver, with a focus on low level implementation details. In
 \cref{section:problems} we then return to high level modelling, and look at the convenience it
-provides for ??temporal problems, ??relabelling and retyping, and ??optimisation problems.
+provides for retyping typed graphs, for temporal problems, and for optimisation problems.
 
-\section{Hybrid Solving}\label{section:hybrid}
+\section{Hybrid Solving With High-Level Modelling}\label{section:hybrid}
 
-The Glasgow Subgraph Solver \cite{DBLP:conf/gg/McCreeshP020} employs a CP approach to solve
-subgraph-finding problems, but using special data structures and algorithms---for example, rather
-than representing the adjacency constraint using a table, it uses bitset adjacency matrices
+Designing an effective hybrid solving system involved three major decisions: how the high-level
+modelling language would identify suitable problems to hybridise, how the solvers would communicate,
+and how often this communication would occur. The first two decisions were relatively
+straightforward to make, but the third required using computational experiments to evaluate
+different options. This section discusses all three of these decisions.
+
+\subsection{High-Level Modelling}
+
+We chose to use the Essence high-level constraint modelling language
+\cite{DBLP:journals/constraints/FrischHJHM08} because of its support for convenient high-level types
+like functions and relations. In a conventional modelling pipeline, problems are specified in
+Essence and then are converted to concrete models that can be solved by a CP solver (in our
+experiments Minion) via the Conjure and SavileRow tools. We augmented Conjure with a command line
+option that instructs it to generate an extra file which describes how the variables representing
+the graph are represented in the SavileRow input (known as Essence'). This is used by the graph
+solver so it can map between its internal state and the variables in Essence'.  SavileRow converts
+the graph model to Minion input, and this conversion contains information which allows Minion to map
+its internal state back to the Essence' given to SavileRow. The graph solver and Minion then
+communicate mappings between the nodes and edges in the graph using the identifiers in the Essence'
+representation of the problem.
+
+This design is based upon the notion that a CP solver and a subgraph solver can have enough of a
+shared understanding of a problem to solve it co-operatively. Indeed, the Glasgow Subgraph Solver
+\cite{DBLP:conf/gg/McCreeshP020} employs a CP approach to solve subgraph-finding problems, but using
+special data structures and algorithms---for example, rather than representing the adjacency
+constraint using an explicit table, it uses bitset adjacency matrices
 \cite{DBLP:conf/cp/McCreeshP15}. The solver also exploits various graph invariants involving degrees
 \cite{DBLP:journals/constraints/ZampelliDS10} and paths \cite{DBLP:conf/cp/AudemardLMGP14} to
 further reduce the search space, and employs special search order heuristics
@@ -294,23 +326,29 @@ solver performs \emph{propagation} to eliminate infeasible values from domains. 
 becomes empty, the solver backtracks; otherwise, it selects a variable, and tries assigning it each
 value from its domain in turn.
 
-For now we will assume that there is some way of setting up the subgraph solver and a CP solver such
-that they both have this same set of variables and values, and that there is some way of knowing how
-to form a correspondence between their internal representations. We will allow the CP solver to have
-additional variables that the subgraph solver does not know about, and we do not specifically
-require the CP solver to be aware of all of the graph constraints. We could therefore use a CP
-solver as a \emph{solution checker}. Whenever the subgraph solver finds a solution, it will pass it
-to the CP solver, which will treat the solution as a set of equality constraints. The CP solver will
-then attempt to find a satisfying assignment. If the CP solver does not have any additional
-variables, this is equivalent to simply checking that the remaining constraints hold, but in general
-this will require search.
-For a decision problem, the CP solver then communicates back to the subgraph
-solver either ``yes, this is a valid solution'', or ``no, reject this solution and keep going''. If
-we are solving a counting or enumeration problem, the CP solver must find \emph{all} solutions and
-communicate this back to the subgraph solver.
+The high-level approach, then, gives us a way of setting up the subgraph solver and a CP solver such
+that they both have an equivalent same set of variables and values for the graph part of the model,
+and tells us how to form a correspondence between their internal representations. Importantly, this
+allows the CP solver to have additional variables that the subgraph solver does not know about, and
+we do not specifically require the CP solver to be aware of all of the graph constraints.
+(Additionally, due to preprocessing, the CP solver may also sometimes have only a subset of values
+for some graph variables visible to it.)
+
+\subsection{When to Communicate?}
+
+Having found a way to set up the two solvers, we must next ask when they should communicate. The
+simplest approach would be to use the CP solver as a \emph{solution checker} for the subgraph
+solver.  Whenever the subgraph solver finds a solution, it will pass it to the CP solver, which will
+treat the solution as a set of equality constraints. The CP solver will then attempt to find a
+satisfying assignment. If the CP solver does not have any additional variables, this is equivalent
+to simply checking that the remaining constraints hold, but in general this will require search.
+For a decision problem, the CP solver then communicates back to the subgraph solver either ``yes,
+this is a valid solution'', or ``no, reject this solution and keep going''. If we are solving a
+counting or enumeration problem, the CP solver must find \emph{all} solutions and communicate this
+back to the subgraph solver.
 
 For more power, but possibly also greater cost, we could additionally ask a CP solver at every stage
-of search to test whether the state the subgraph solver is in is obviously infeasible.  Whenever the
+of search to test whether the subgraph solver is in an obviously infeasible state.  Whenever the
 subgraph solver has finished performing propagation, it can communicate the \emph{trail} (that is,
 its current sequence of guessed assignments) to the CP solver, which again treats these as
 additional equality constraints. The CP solver then performs its own propagation (but not search),
@@ -323,30 +361,18 @@ Unfortunately, each of these approaches has drawbacks. The solution we will sett
 upon \emph{rollbacks}; we will describe this below, after presenting experiments that demonstrate
 the difference between these approaches.
 
-\subsection{Implementation}
-
-Problems are specified in Essence and then are converted to concrete models that can be solved by
-a CP solver (in our experiments Minion) using Conjure and Savile Row.
-Running Conjure with a special flag (--graph-solver) instructs it to generate an extra file which
-describes how the variables representing the graph is represented in the SavileRow input (known
-as Essence'). This is used
-by the graph solver so it can map between its internal state and the variables in Essence'.
-SavileRow converts the graph model to Minion input, and this conversion contains information which
-allows Minion to map its internal state back to the Essence' given to SavileRow. The graph solver
-and Minion then communicate mappings between the nodes and edges in the graph using the
-identifiers in the Essence' representation of the problem.
+\subsection{How to Communicate}
 
 To enable communication between the two solvers, we use FIFOs (named pipes), and a simple text-based
 protocol.  Both solvers are run and initialised, and then the subgraph solver proceeds as normal,
-whilst the CP solver waits to be given commands. The subgraph solver then communicates its trail
-or a candidate solution as a set of assignment constraints to the CP solver. The CP solver
-then sets these assignments its state and then either performs a single propagation, or
-complete search, as directed. When finished the solver communicates its success or failure state,
-and any deletions (if requested), back to the subgraph solver and reverts any changes made by
-setting the assignments. This approach is designed to be
-solver-agnostic, and adding support for different CP solvers (or non-CP solvers) is simple, as long
-as they support performing a search or propagation from a given set of assignments.
-
+whilst the CP solver waits to be given commands. The subgraph solver then communicates its trail or
+a candidate solution as a set of assignment constraints to the CP solver. The CP solver then sets
+these assignments its state and then either performs a single propagation, or complete search, as
+directed. When finished the solver communicates its success or failure state, and any deletions (if
+requested), back to the subgraph solver and reverts any changes made by setting the assignments.
+This approach is designed to be solver-agnostic, and adding support for different CP solvers (or
+non-CP solvers) is simple, as long as they support performing a search or propagation from a given
+set of assignments.
 
 \subsection{Design Experiments}
 
@@ -363,9 +389,9 @@ as they support performing a search or propagation from a given set of assignmen
 \end{figure}
 
 We now present the results of some computational experiments. The experiments in this section are
-designed to be computationally hard, and to emphasise the difference between the approaches, rather
+designed to be hard, and to emphasise the difference between the approaches, rather
 than to be realistic. We will continue to work with Solnon's non-induced subgraph isomorphism
-benchmark instances, but will consider three variations. Firstly, we will consider the problem with
+benchmark instances, but will consider four variations. Firstly, we will consider the problem with
 no side constraints. This is, in some sense, the worst case scenario, where we must pay the full
 price of hybrid solving, but cannot get any benefit from it. Secondly, let us say that the number of
 odd-indexed target vertices used must be greater than the number of even target vertices used:
@@ -384,10 +410,10 @@ pattern vertices to odd target vertices:
 such that forAll a : P . (a (*\modsymbol{}*) 2) = (f(a) (*\modsymbol{}*) 2)
 \end{lstlisting}
 
-We chose these last three problems because the first is likely not to be able to
+We chose these problems because the second is likely not to be able to
 perform inference until deep in a search tree (when most pattern vertices are mapped to specific
-target vertices), the second is likely to be able to perform inference early in the search tree
-(after a few assignments have been made, but not at the root node), and the third should propagate
+target vertices), the third is likely to be able to perform inference early in the search tree
+(after a few assignments have been made, but not at the root node), and the fourth should propagate
 only at the root node.
 
 The results of these experiments are presented in \cref{figure:cumulative}. Let us first look at the
@@ -399,7 +425,7 @@ although we can pay a substantial startup overhead. This should not be surprisin
 constraints, the subgraph solver runs as normal, and will perform just one call to the CP solver on
 satisfiable instances. The propagating approach is over an order of magnitude slower: calling the CP
 solver at every search node is clearly very expensive. (We also tried calling the CP solver to test
-feasibility, without communicating deletions; this made no noticable difference to performance, and
+feasibility, without communicating deletions; this made no noticeable difference to performance, and
 so is not pictured.) Finally, all approaches substantially outperform using a CP solver on its own
 without help from the subgraph solver.
 
@@ -413,8 +439,8 @@ the subgraph solver remains much better than a pure CP approach, except that in 
 checking is slightly worse than just using the CP solver on its own.
 
 As a point of comparison, we also implemented these three sets of side constraints natively inside
-the Glasgow solver. For the ``more odd than even'' case, we did this through solution checking, for
-``less than three odd'' we implemented checking during search, and for ``odd to odd, even to even''
+the Glasgow solver. For the ``more odd than even'' case, we did this through solution checking; for
+``less than three odd'' we implemented checking during search; and for ``odd to odd, even to even''
 we implemented initial domain filtering. Our implementation choices here are intended to reflect what a
 reasonable programmer would do if the high level approach were not available (and we intentionally
 selected side constraints that would not be too difficult to implement). In two of the three cases,
@@ -426,16 +452,17 @@ rollback approach, which we now describe.
 
 From what we have seen so far, it is obviously important to call the CP solver \emph{some} of the
 time during search, but too expensive to call it \emph{all} of the time. We will therefore introduce
-a new approach, which we call \emph{rollback}. This approach is inspired by backjumping ??cite, as
-well as by the conflict analysis methods used in SAT and SMT solvers ??cite and in lazy clause
-generating CP solvers ??cite. The idea is as follows.  Firstly, we call the CP solver with full
-propagation at the root node, in case we are dealing with a particularly rich labelling scheme.
-Secondly, we use the CP solver for solution checking, since this is required for correctness. Now,
-suppose the CP solver rejects a candidate solution: this will cause the subgraph solver to
-backtrack. At this point, we call the CP solver again, with full propagation. Either the CP solver
-indicates feasibility, in which case we proceed with search (potentially with a reduced set of
-domains), or the CP solver indicates failure, in which case we backtrack again, and do another
-attempt at full propagation, and so on until feasiblity is reached.
+a new approach, which we call \emph{rollback}. This approach is inspired by backjumping
+\cite{DBLP:journals/ci/Prosser93}, as well as by the conflict analysis methods used in SAT and SMT
+solvers \cite{DBLP:conf/iccad/SilvaS96} and in lazy clause generating CP solvers
+\cite{DBLP:conf/cp/OhrimenkoSC07,DBLP:conf/cpaior/Stuckey10}. The idea is as follows.  Firstly, we
+call the CP solver with full propagation at the root node, in case we are dealing with a
+particularly rich labelling scheme.  Secondly, we use the CP solver for solution checking, since
+this is required for correctness. Now, suppose the CP solver rejects a candidate solution: this will
+cause the subgraph solver to backtrack. At this point, we call the CP solver again, with full
+propagation. Either the CP solver indicates feasibility, in which case we proceed with search
+(potentially with a reduced set of domains), or the CP solver indicates failure, in which case we
+backtrack again, and do another attempt at full propagation, and so on until feasibility is reached.
 
 The idea behind this approach is to avoid calling the CP solver when it is unlikely to do anything
 useful, but that once a failure has been encountered, we want to extract as much information as we
@@ -455,30 +482,36 @@ therefore use this method for the remainder of the paper.
 \section{Subgraph Problems with Side Constraints}\label{section:problems}
 
 We now look at three classes of real-world subgraph-finding problems that, until now, have been
-solved using dedicated approaches. We show how easy it is to model these problems in Essence. ?? do
-some actual simple experiments on them?
+solved using dedicated approaches. We show how easy it is to model these problems in Essence,
+demonstrating the usefulness of the high-level modelling approach for prototyping and development.
 
 \subsection{Retyping Problems}\label{section:typegraphs}
 
-  In graph theory~\cite{Ehrig+06}, a graph is given by a set of vertices and a set of edges and two functions giving the source and target node for an edge, respectively.
-  Morphisms between graphs map vertices to vertices and edges to edges, preserving the structure of the graphs.
-  Often, we are interested in typed graphs.
-  Here, we assume a dedicated graph TG---the type graph---to be given.
-  Then we can define typed graphs as graphs for which a morphism into TG has been defined.
-  In effect, we are labelling each vertex and edge with its corresponding type.
-  
-  For typed graphs, morphisms between the graphs are typically defined between graphs typed over the same type graph, but there are situations where we are interested in mapping between graphs typed over different type graphs.
-  We describe an example scenario in~\cite{Duran+12,Duran+17}, where we compose graph transformation systems by defining morphisms between the rules constituting the respective transformation systems.
-  In this case, the source and target transformation systems will normally have different type graphs and we will first establish a morphism between the two type graphs.
-  Mappings between the various graphs making up the rules then need to preserve structure and typing subject to the morphism between type graphs.
-  We have developed tool support for this approach to specification composition.\footnote{\url{https://github.com/gts-morpher/gts_morpher}}
-  A key objective is to minimise the amount of specification that needs to be written.
-  For example, the tool allows morphisms between graph transformation systems to be only partially specified and then automatically completes the full morphism, if it can do so unambiguously.
-  This requires solving a sub-isomorphism problem.
+The basic notion of a graph conveys only adjacency information, and a subgraph isomorphism simply
+finds a certain structural pattern. In practice, this is often augmented with additional
+information---for example, we have seen how labels can be associated with vertices and edges, which
+can be used in chemical applications to represent different kinds of atom or bond. In this case,
+subgraph isomorphisms are also expected to preserve labels, so carbon atoms can only be mapped to
+carbon atoms, and double bonds must be mapped to double bonds.  A richer labelling abstraction comes
+in the form of \emph{typed graphs}, where the labels themselves also carry a graph structure
+\cite{Ehrig+06}; we show an example in \cref{figure:littlegraphs}. In practice this labelling
+structure is specified by providing two graphs, together with a morphism from the main graph to its
+type graph.
 
-%A \emph{typed graph} is a kind of labelled graph where the labels also carry a graph structure
-%??cite. In general, mappings between typed graphs must preserve the label structure, but here we
-%will be looking at a problem variation involving relabelling which occurs in ??application. 
+For typed graphs, morphisms between the graphs are typically defined between graphs typed over the
+same type graph, but there are situations where we are interested in mapping between graphs typed
+over different type graphs.  One such scenario from a software engineering context is described by
+Dur{\'a}n et al.~\cite{Duran+12,Duran+17}, where graph transformation systems are composed by
+defining morphisms between the rules constituting the respective transformation systems.  In this
+case, the source and target transformation systems will normally have different type graphs, a
+morphism must also be established between the two type graphs.  Mappings between the various graphs
+making up the rules then need to preserve structure and typing subject to the morphism between type
+graphs. This approach to specification composition is implemented by the gts-morpher
+tool.\footnote{\url{https://github.com/gts-morpher/gts_morpher}} A key objective is to minimise the
+amount of specification that needs to be written.  For example, the tool allows morphisms between
+graph transformation systems to be only partially specified and then automatically completes the
+full morphism, if it can do so unambiguously---this requires solving a sub-isomorphism problem.
+
 We may describe typed graph subisomorphism problems in Essence as follows. As before, we are given a
 pattern graph and a target graph, both of which carry labels; we will draw the vertex labels from
 different sets, to emphasise
@@ -527,7 +560,6 @@ and also requiring that the structure on the labels is preserved,
 such that forAll (a,b) in defined(pattype) .
     pattype((a,b)) = tgttype((r(a),r(b)))
 \end{lstlisting}
-?? Should we say that we are now searching for a commuting square?
 
 Consider again the example in \cref{figure:littlegraphs}, and now suppose they are equipped with the type
 structures shown to the right of each graph,
@@ -546,26 +578,34 @@ We now find two solutions:
 because we can map pattern vertex 3 to target vertex 5 through retyping, but mapping pattern vertex 3
 to target vertex 4 would not respect the type graph structure.
 
+More generally, the field of model-driven software engineering includes numerous examples of using
+search and optimisation techniques to generate or transform graphs
+\cite{DBLP:journals/ase/BoussaidSA17}. Existing approaches largely make use of ad-hoc
+\cite{DBLP:conf/icse/SemerathNV18} and metaheuristic methods
+\cite{DBLP:conf/models/EfstathiouWZ14,DBLP:journals/sosym/BillFTMW19,DBLP:conf/models/BurduselZ019},
+but we believe that with the help of suitably accessible high-level modelling tools, this could
+become a fruitful area for constraint programming research in the future.
+
 \subsection{Temporal Subgraph Problems}\label{section:temporalgraphs}
-In a \emph{temporal graph}, edges are labelled with timestamps that denote times when edges are active---here we use
-integers as timestamps.  Including information on the timing of edges substantially increases the modelling power of these graphs, allowing them to 
-more accurately reflect the structure and dynamics of a wide variety of real-world systems (e.g. trade networks, changing contact networks, transport networks), 
-and address optimisation questions in which the timing of edges is fundamental.  
 
-As algorithms and formalisms have become available for temporal graphs, examples of their application have become widespread \cite{holmeReview}, 
-notably including applications within epidemiology \cite{temporalEpi} and computational social science \cite{socialTemporalCite}.
-Because the use of temporal graphs has spread beyond theoretical researchers, the ability to rapidly define and experiment with 
-new problem definitions and constraints is valuable - practitioners are unlikely to define bespoke algorithms for novel problems as they arise.
+Another labelling scheme is used in \emph{temporal graphs}, where edges are labelled with timestamps
+that denote times when edges are active---here we use integers as timestamps.  Including information
+on the timing of edges substantially increases the modelling power of these graphs, allowing them to
+more accurately reflect the structure and dynamics of a wide variety of real-world systems (e.g.
+trade networks, changing contact networks, transport networks), and address optimisation questions
+in which the timing of edges is fundamental.
 
-%Temporal graphs 
-% why being able to try new constraints easily is useful for practitioners
+As algorithms and formalisms have become available for temporal graphs, examples of their
+application have become widespread \cite{holmeReview}, notably including applications within
+epidemiology \cite{temporalEpi} and computational social science \cite{socialTemporalCite}.  Because
+the use of temporal graphs has spread beyond theoretical researchers, the ability to rapidly define
+and experiment with new problem definitions and constraints is valuable---practitioners are unlikely
+to define bespoke algorithms for novel problems as they arise.
 
-%In a \emph{temporal graph}, edges are labelled with some kind of timestamp---here we will use
-%integers. Temporal pattern matching and counting has applications in ??. 
-There are at least three
-common kinds of temporal subgraph isomorphism. In an \emph{exact} subisomorphism, times are simply
-labels that must match exactly. If we look at \cref{figure:littlegraphs}, now ignoring vertex labels
-but using the edge labels to carry the timestamps,
+There are at least three common kinds of temporal subgraph isomorphism. In an \emph{exact}
+subisomorphism, times are simply labels that must match exactly. If we look at
+\cref{figure:littlegraphs}, now ignoring vertex labels but using the edge labels to carry the
+timestamps,
 \begin{lstlisting}
 letting l be 1
 letting e be 3
@@ -615,9 +655,9 @@ which gets us yet another solution,
 Of course, when using a high level modelling approach, we are not restricted to these three problem
 variants, and could easily try out new models in an interactive setting. For example, it would take
 only a few minutes to write a model for a temporal problem where all edges must occur within a short
-but unspecified time period, whereas adapting a dedicated solver to check this constraint would be a
-substantial programming effort (and making the solver propagate rather than check this constraint
-would be even harder).
+but unspecified time period \cite{DBLP:conf/asunam/RedmondC13}, whereas adapting a dedicated solver
+to check this constraint would be a substantial programming effort (and making the solver propagate
+rather than check this constraint would be even harder).
 
 \subsection{Subgraph Isomorphism With Costs}
 
@@ -633,14 +673,27 @@ minimising sum([ tcost(f(a)) | a : P])
 \end{lstlisting}
 We could also just as easily ask for the solution whose most expensive edge is cheapest, or that
 uses fewest vertices with a particular label. These kinds of problem occur widely in practice,
-including in ?? skyline graphs, ?? labelled subgraph finding, ?? weighted cliques.
+including in skyline graph queries \cite{DBLP:journals/pvldb/PandeR017}, labelled subgraph finding
+\cite{DBLP:conf/colognetwente/DellOlmoCC11}, and weighted clique problems
+\cite{DBLP:conf/cp/McCreeshPST17}.
 
 \section{Conclusion}
 
-?? A lot of flexibility, decent performance on hard instances although the startup costs are
-vicious. A key benefit is supporting large queries, which current solutions struggle with. Suitable
-for interactive use in domain settings. For integration into larger systems, would benefit from
-bypassing the high level modelling language and using two low level solvers directly.
+The system we have presented shows that it is possible to combine the power of modern subgraph
+solvers with the flexibility of a general purpose constraint programming toolkit, although doing so
+efficiently requires careful consideration of how frequently the solvers communicate. We believe
+further research in this direction may be useful---for example, would it be possible to make use of
+some kind of conflict analysis rather than a backjumping approach?
+
+When driven by a high level modelling approach, this system is particularly suitable for rapid
+prototyping and for dynamic queries where side constraints can be specified in response to user
+need. However, the high level modelling approach does come with a large startup cost, which makes it
+unsuitable for deployment in application contexts that involve solving many thousands of problem
+instances in real-time. Fortunately though, connecting the low level solvers manually is also an
+option once a design has been decided upon. We also expect that new approaches may be necessary to
+deal with the huge but sparse graphs that arise in some applications, since table constraints and
+conventional CP domain stores both struggle when moving beyond ten thousand of vertices in target
+graphs.
 
 \bibliographystyle{splncs04}
 \bibliography{paper}

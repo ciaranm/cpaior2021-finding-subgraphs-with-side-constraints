@@ -3,7 +3,7 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
-load "inferno.pal"
+load "viridis.pal"
 
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
@@ -41,8 +41,8 @@ cy(s,m)=stringcolumn(s)eq"NaN"?1e-10:column(s)*m>=3600e3?1e-10:1
 
 plot \
     "runtimes.data" u (cx("si-noninduced-gss-20201208",1000)):(cy("si-noninduced-gss-20201208",1000)) smooth cum w l ls 1 ti "Glasgow" at end, \
-    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201208",1000)):(cy("si-noninduced-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti "Minion" at end, \
+    "runtimes.data" u (cx("si-noninduced-minion-preprocess-gac-20201208",1000)):(cy("si-noninduced-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti "Essence" at end, \
     "runtimes.data" u (cx("si-noninduced-vf2-20201208",1000)):(cy("si-noninduced-vf2-20201208",1000)) smooth cum w l ls 5 ti '\raisebox{0mm}{VF2}' at end, \
     "runtimes.data" u (cx("si-noninduced-ri-20201208",1000)):(cy("si-noninduced-ri-20201208",1000)) smooth cum w l ls 6 ti "RI" at end, \
-    "runtimes.data" u (cx("si-noninduced-pathlad-20201208",1000)):(cy("si-noninduced-pathlad-20201208",1000)) smooth cum w l ls 7 ti '\raisebox{-1mm}{PathLAD}' at end, \
+    "runtimes.data" u (cx("si-noninduced-pathlad-20201208",1000)):(cy("si-noninduced-pathlad-20201208",1000)) smooth cum w l ls 8 ti '\raisebox{-1mm}{PathLAD}' at end, \
 

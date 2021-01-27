@@ -24,5 +24,5 @@ plot \
     "runtimes.data" u (cx("minion",1000)):(cy("minion",1000)) smooth cum w l lw 2 dt ".", \
     "runtimes.data" u (cx("hybrid-checking",1000)):(cy("hybrid-checking",1000)) smooth cum w l lw 2 dt "." notitle, \
     "runtimes.data" u (cx("hybrid-always",1000)):(cy("hybrid-always",1000)) smooth cum w l lw 2 dt "." notitle, \
-    "runtimes.data" u (cx("hybrid-rbj",1000)):(cy("hybrid-rbj",1000)) smooth cum w l lw 2 lc 6 ti 'Rollback' at end
+    "runtimes.data" u (cx("hybrid-rbj",1000)):(cy("hybrid-rbj",1000)) smooth cum w l lw 2 lc 7 ti 'Rollback' at end
 

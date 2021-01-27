@@ -3,9 +3,9 @@
 set terminal tikz standalone color size 2.6in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
-load "inferno.pal"
+load "viridis.pal"
 
-set xlabel "Minion (ms)"
+set xlabel "Essence (ms)"
 set ylabel "Glasgow (ms)" offset character 0.5
 set border 3
 set grid

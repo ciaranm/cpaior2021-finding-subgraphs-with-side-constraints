@@ -3,7 +3,7 @@
 set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
-load "inferno.pal"
+load "viridis.pal"
 
 set xlabel "Runtime (ms)"
 set ylabel "Instances Solved" offset character 1.5
@@ -40,9 +40,9 @@ set arrow 506 from graph 0, first upperygap length graph -.03 angle 15 nohead lw
 set title "Odd to odd, even to even"
 
 plot \
-    "runtimes.data" u (cx("si-parity-gss-20201208",1000)):(cy("si-parity-gss-20201208",1000)) smooth cum w l ls 1 ti '\raisebox{1mm}{Glasgow}' at end, \
-    "runtimes.data" u (cx("si-parity-minion-preprocess-gac-20201208",1000)):(cy("si-parity-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti '\raisebox{0.5mm}{Minion}' at end, \
+    "runtimes.data" u (cx("si-parity-gss-20201208",1000)):(cy("si-parity-gss-20201208",1000)) smooth cum w l ls 1 ti '\raisebox{1mm}{Glasgow+}' at end, \
+    "runtimes.data" u (cx("si-parity-minion-preprocess-gac-20201208",1000)):(cy("si-parity-minion-preprocess-gac-20201208",1000)) smooth cum w l ls 3 ti '\raisebox{0.5mm}{Essence}' at end, \
     "runtimes.data" u (cx("si-parity-hybrid-preprocess-gac-comm-checker-20201208",1000)):(cy("si-parity-hybrid-preprocess-gac-comm-checker-20201208",1000)) smooth cum w l ls 5 ti '\raisebox{-0.5mm}{Checking}' at end, \
     "runtimes.data" u (cx("si-parity-hybrid-preprocess-gac-comm-propagate-20201208",1000)):(cy("si-parity-hybrid-preprocess-gac-comm-propagate-20201208",1000)) smooth cum w l ls 6 ti 'Propagating' at end, \
-    "runtimes.data" u (cx("si-parity-hybrid-preprocess-gac-comm-rollback-20201208",1000)):(cy("si-parity-hybrid-preprocess-gac-comm-rollback-20201208",1000)) smooth cum w l ls 7 ti '\raisebox{-0.5mm}{Rollback}' at end, \
+    "runtimes.data" u (cx("si-parity-hybrid-preprocess-gac-comm-rollback-20201208",1000)):(cy("si-parity-hybrid-preprocess-gac-comm-rollback-20201208",1000)) smooth cum w l ls 8 ti '\raisebox{-0.5mm}{Rollback}' at end, \
 
