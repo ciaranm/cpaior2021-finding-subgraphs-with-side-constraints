@@ -503,10 +503,10 @@ same type graph, but there are situations where we are interested in mapping bet
 over different type graphs.  One such scenario from a software engineering context is described by
 Dur{\'a}n et al.~\cite{Duran+12,Duran+17}, where graph transformation systems are composed by
 defining morphisms between the rules constituting the respective transformation systems.  In this
-case, the source and target transformation systems will normally have different type graphs, a
+case, the source and target transformation systems will normally have different type graphs; a
 morphism must also be established between the two type graphs.  Mappings between the various graphs
 making up the rules then need to preserve structure and typing subject to the morphism between type
-graphs. This approach to specification composition is implemented by the gts-morpher
+graphs. This approach to specification composition is implemented by the GTSMorpher
 tool.\footnote{\url{https://github.com/gts-morpher/gts_morpher}} A key objective is to minimise the
 amount of specification that needs to be written.  For example, the tool allows morphisms between
 graph transformation systems to be only partially specified and then automatically completes the
