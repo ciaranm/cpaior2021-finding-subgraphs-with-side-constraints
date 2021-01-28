@@ -42,7 +42,7 @@ Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
     Prosser\inst{3}\orcidID{0000-0003-4460-6912} \and Steffen
     Zschaler\inst{4}\orcidID{0000-0001-9062-6637} \\
 }
-\authorrunning{\"O. Akgun et al.}
+\authorrunning{\"O. Akg\"un et al.}
 \institute{
     University of St Andrews, Scotland \and
     University of Glasgow, Scotland \\ \email{ciaran.mccreesh@glasgow.ac.uk} \and
@@ -148,7 +148,7 @@ dedicated subgraph isomorphism algorithms, including the Glasgow Subgraph Solver
     \label{figure:littlegraphs}
 \end{figure}
 
-We can express these problems in the Essence high level modelling language, as follows. We assume
+We can express these problems in the Essence modelling language, as follows. We assume
 vertices take their labels from the set $L = \{ 1\ldots\ell \}$ for some given $\ell$, and edges
 from $E = \{ 1\ldots{}e \}$ (and so $\ell$ and / or $e$ may be 1, for applications that do not use
 labels on vertices and / or edges):
@@ -157,8 +157,8 @@ given l, e : int
 letting L be domain int(1..l)
 letting E be domain int(1..e)
 \end{lstlisting}
-We take as input a pattern directed graph which has $p$ vertices (which we number from 1 to $p$, in
-the set $P$), and a target directed graph which has $t$ vertices (numbered from 1 to $t$, the set
+We take as input a directed pattern graph which has $p$ vertices (which we number from 1 to $p$, in
+the set $P$), and a directed target graph which has $t$ vertices (numbered from 1 to $t$, the set
 $T$). Each graph is represented as total function from vertices to vertex labels, and a
 \emph{partial} function from pairs of (not necessarily distinct) vertices to edge labels:
 \begin{lstlisting}
@@ -296,18 +296,18 @@ different options. This section discusses all three of these decisions.
 
 \subsection{High-Level Modelling}
 
-We chose to use the Essence high-level constraint modelling language
-\cite{DBLP:journals/constraints/FrischHJHM08} because of its support for convenient high-level types
-like functions and relations. In a conventional modelling pipeline, problems are specified in
-Essence and then are converted to concrete models that can be solved by a CP solver (in our
-experiments Minion) via the Conjure and SavileRow tools. We augmented Conjure with a command line
-option that instructs it to generate an extra file which describes how the variables representing
-the graph are represented in the SavileRow input (known as Essence'). This is used by the graph
-solver so it can map between its internal state and the variables in Essence'.  SavileRow converts
-the graph model to Minion input, and this conversion contains information which allows Minion to map
-its internal state back to the Essence' given to SavileRow. The graph solver and Minion then
-communicate mappings between the nodes and edges in the graph using the identifiers in the Essence'
-representation of the problem.
+We chose to use the Essence modelling language \cite{DBLP:journals/constraints/FrischHJHM08} because
+of its support for convenient high-level types like functions and relations, which can easily
+describe graphs and related abstractions. In a conventional modelling pipeline, problems are
+specified in Essence and then are converted to concrete models that can be solved by a CP solver (in
+our experiments Minion) via the Conjure and SavileRow tools. We augmented Conjure with a command
+line option that instructs it to generate an extra file which describes how the variables
+representing the graph are represented in the SavileRow input (known as Essence'). This is used by
+the graph solver so it can map between its internal state and the variables in Essence'.  SavileRow
+converts the graph model to Minion input, and this conversion contains information which allows
+Minion to map its internal state back to the Essence' given to SavileRow. The graph solver and
+Minion then communicate mappings between the nodes and edges in the graph using the identifiers in
+the Essence' representation of the problem.
 
 This design is based upon the notion that a CP solver and a subgraph solver can have enough of a
 shared understanding of a problem to solve it co-operatively. Indeed, the Glasgow Subgraph Solver
@@ -327,7 +327,7 @@ becomes empty, the solver backtracks; otherwise, it selects a variable, and trie
 value from its domain in turn.
 
 The high-level approach, then, gives us a way of setting up the subgraph solver and a CP solver such
-that they both have an equivalent same set of variables and values for the graph part of the model,
+that they both have an equivalent set of variables and values for the graph part of the model,
 and tells us how to form a correspondence between their internal representations. Importantly, this
 allows the CP solver to have additional variables that the subgraph solver does not know about, and
 we do not specifically require the CP solver to be aware of all of the graph constraints.
@@ -367,7 +367,7 @@ To enable communication between the two solvers, we use FIFOs (named pipes), and
 protocol.  Both solvers are run and initialised, and then the subgraph solver proceeds as normal,
 whilst the CP solver waits to be given commands. The subgraph solver then communicates its trail or
 a candidate solution as a set of assignment constraints to the CP solver. The CP solver then sets
-these assignments its state and then either performs a single propagation, or complete search, as
+these assignments as its state and either performs a single propagation, or complete search, as
 directed. When finished the solver communicates its success or failure state, and any deletions (if
 requested), back to the subgraph solver and reverts any changes made by setting the assignments.
 This approach is designed to be solver-agnostic, and adding support for different CP solvers (or
@@ -378,14 +378,17 @@ set of assignments.
 
 \begin{figure}[p]
     \includegraphics{gen-graph-nosideconstraints.pdf}\hfill\includegraphics{gen-graph-oddeven.pdf}
+
     \bigskip
+
     \includegraphics{gen-graph-mostlyodd.pdf}\hfill\includegraphics{gen-graph-parity.pdf}
     \caption{Comparing different approaches to hybrid solving, showing the cumulative number of
     instances solved over time. On the top row, ``no side constraints'' then with the ``more odd
     target vertices than even target vertices'' side constraint; on the bottom row, the ``mostly odd
     target vertices'' side constraint on the left, and the ``odd to odd, even to even'' side
     constraint on the right. In the top left plot, the ``Checking'' and ``Rollback'' lines are
-    indistinguishable.}\label{figure:cumulative}
+    indistinguishable. The Glasgow+ lines show the Glasgow Subgraph Solver with
+    manually-implemented side constraints.}\label{figure:cumulative}
 \end{figure}
 
 We now present the results of some computational experiments. The experiments in this section are
@@ -439,14 +442,14 @@ the subgraph solver remains much better than a pure CP approach, except that in 
 checking is slightly worse than just using the CP solver on its own.
 
 As a point of comparison, we also implemented these three sets of side constraints natively inside
-the Glasgow solver. For the ``more odd than even'' case, we did this through solution checking; for
-``less than three odd'' we implemented checking during search; and for ``odd to odd, even to even''
-we implemented initial domain filtering. Our implementation choices here are intended to reflect what a
-reasonable programmer would do if the high level approach were not available (and we intentionally
-selected side constraints that would not be too difficult to implement). In two of the three cases,
-the hand-crafted code does somewhat outperform the hybrid solving, but in the ``more odd than even''
-case, hybrid solving actually beats the hand-crafted dedicated solver implementation when using the
-rollback approach, which we now describe.
+the Glasgow solver: we label these as Glasgow+. For the ``more odd than even'' case, we did this
+through solution checking; for ``less than three odd'' we implemented checking during search; and
+for ``odd to odd, even to even'' we implemented initial domain filtering. Our implementation choices
+here are intended to reflect what a reasonable programmer would do if the high level approach were
+not available (and we intentionally selected side constraints that would not be too difficult to
+implement). In two of the three cases, the hand-crafted code does somewhat outperform the hybrid
+solving, but in the ``more odd than even'' case, hybrid solving actually beats the hand-crafted
+dedicated solver implementation when using the rollback approach, which we now describe.
 
 \subsection{A Rollback Approach to Communication}
 
@@ -626,7 +629,7 @@ then there are two solutions,
 (1 --> 2, 2 --> 3, 3 --> 4)
 \end{lstlisting}
 
-A less strict kind of subisomorphism is an \emph{offset}, where edge labels must match exactly but
+A less strict kind of subisomorphism is an \emph{offset}, where edge labels must match exactly, but
 offset by an integer constant. In our example, this means ``find a mapping where the event from 2
 to 3 occurs one time unit after the event from 1 and 2''. We can model this as follows:
 \begin{lstlisting}

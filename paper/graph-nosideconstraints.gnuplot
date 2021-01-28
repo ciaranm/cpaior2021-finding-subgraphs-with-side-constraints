@@ -1,6 +1,6 @@
 # vim: set et ft=gnuplot sw=4 :
 
-set terminal tikz standalone color size 2.2in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
+set terminal tikz standalone color size 2.15in,2.6in font '\scriptsize' preamble '\input{gnuplot-preamble}'
 set output "gen-" . ARG0[:(strlen(ARG0)-strlen(".gnuplot"))] . ".tex"
 
 load "viridis.pal"
