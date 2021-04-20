@@ -52,6 +52,9 @@ Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
 \usepackage{hyperref}
 \usepackage{cleveref}
 
+% url by default does horrible things with line breaks, this makes it behave better
+\usepackage{xurl}
+
 \crefname{Figure}{Figure}{Figures}
 \crefname{figure}{figure}{figures}
 
@@ -249,7 +252,9 @@ running Ubuntu 18.04. The source code used for these experiments is released as 
 Subgraph
 Solver\footnote{\url{https://github.com/ciaranm/glasgow-subgraph-solver/releases/tag/cpaior2021-finding-subgraphs-with-side-constraints}},
 Minion\footnote{\url{https://github.com/minion/minion/releases/tag/1.9}}, and
-Conjure\footnote{\url{https://github.com/conjure-cp/conjure}} distributions.
+Conjure\footnote{\url{https://github.com/conjure-cp/conjure}} distributions, and we provide a
+separate archive for experimental
+scripts\footnote{\url{https://github.com/ciaranm/cpaior2021-finding-subgraphs-with-side-constraints}}.
 
 For graphs, we will be using the 14,621 unlabelled, undirected instances from
 Solnon's benchmark suite\footnote{\url{https://perso.liris.cnrs.fr/christine.solnon/SIP.html}}. This
