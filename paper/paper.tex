@@ -39,14 +39,13 @@ Engineering and Physical Sciences Research Council [grant number EP/P026842/1]}}
     Enright\inst{2}\orcidID{0000-0002-0266-3292} \and Christopher
     Jefferson\inst{1}\orcidID{0000-0003-2979-5989} \and Ciaran
     McCreesh\inst{2}\orcidID{0000-0002-6106-4871} \and Patrick
-    Prosser\inst{3}\orcidID{0000-0003-4460-6912} \and Steffen
-    Zschaler\inst{4}\orcidID{0000-0001-9062-6637} \\
+    Prosser\inst{2}\orcidID{0000-0003-4460-6912} \and Steffen
+    Zschaler\inst{3}\orcidID{0000-0001-9062-6637} \\
 }
 \authorrunning{\"O. Akg\"un et al.}
 \institute{
     University of St Andrews, Scotland \and
     University of Glasgow, Scotland \\ \email{ciaran.mccreesh@glasgow.ac.uk} \and
-    Algorithmicists Anonymous, Scotland \and
     King's College London, England
 }
 
@@ -241,13 +240,19 @@ and if we removed the injective keyword for the relabelling, we would find a fif
 \end{lstlisting}
 We return to relabelling in \cref{section:typegraphs}.
 
-\subsection{Preliminary Experiments and Motivation}
+\subsection{Initial Experiments and Motivation}
 
 Unfortunately, whilst elegant and flexible, the performance of this approach leaves a lot to be
 desired on basic subgraph isomorphism instances.  The computational experiments in this paper are
 performed on a cluster of machines with dual Intel Xeon E5-2697A v4 processors and 512GBytes RAM
-running Ubuntu 18.04.  We will be using the 14,621 unlabelled, undirected instances from
-Solnon's benchmark suite\footnote{https://perso.liris.cnrs.fr/christine.solnon/SIP.html}. This
+running Ubuntu 18.04. The source code used for these experiments is released as part of the Glasgow
+Subgraph
+Solver\footnote{\url{https://github.com/ciaranm/glasgow-subgraph-solver/releases/tag/cpaior2021-finding-subgraphs-with-side-constraints}},
+Minion\footnote{\url{https://github.com/minion/minion/releases/tag/1.9}}, and
+Conjure\footnote{\url{https://github.com/conjure-cp/conjure}} distributions.
+
+For graphs, we will be using the 14,621 unlabelled, undirected instances from
+Solnon's benchmark suite\footnote{\url{https://perso.liris.cnrs.fr/christine.solnon/SIP.html}}. This
 benchmark suite was originally designed for algorithm portfolios work
 \cite{DBLP:conf/lion/KotthoffMS16}, and brings together several collections of application and
 randomly-generated instances with varying difficulties and solution counts (including many
