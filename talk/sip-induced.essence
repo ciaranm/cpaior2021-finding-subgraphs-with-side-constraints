@@ -1,0 +1,3 @@
+such that forAll (a, b) : (P, P) .
+    (f(a), f(b)) in defined(tgt) ->
+        (a, b) in defined(pat)

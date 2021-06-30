@@ -1,0 +1,3 @@
+find o : int(-e..e)
+such that forAll (a,b) in defined(pat) .
+    pat((a,b)) = o + tgt((f(a), f(b)))

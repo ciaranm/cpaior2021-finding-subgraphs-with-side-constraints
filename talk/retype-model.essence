@@ -1,0 +1,15 @@
+given pl, tl, e : int
+letting PL be domain int(1..pl)
+letting TL be domain int(1..tl)
+letting E be domain int(1..e)
+
+letting P be domain int(1..p)
+letting T be domain int(1..t)
+
+given pat : function (P, P) --> E
+given tgt : function (T, T) --> E
+given plab : function (total) P --> PL
+given tlab : function (total) T --> TL
+
+given pattype : function (PL, PL) --> E
+given tgttype : function (TL, TL) --> E

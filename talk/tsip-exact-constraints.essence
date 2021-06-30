@@ -1,0 +1,2 @@
+such that forAll ((a, b), lbl) in pat .
+    ((f(a), f(b)), lbl) in toSet(tgt)

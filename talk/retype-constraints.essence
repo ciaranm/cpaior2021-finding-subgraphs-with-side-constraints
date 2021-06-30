@@ -1,0 +1,10 @@
+find r : function
+    (total, injective) PL --> TL
+
+such that forAll ((a, b), lbl) in pat .
+    ((f(a), f(b)), lbl) in toSet(tgt)
+such that forAll a : P .
+    r(plab(a)) = tlab(f(a))
+
+such that forAll (a,b) in defined(pattype) .
+    pattype((a,b)) = tgttype((r(a),r(b)))

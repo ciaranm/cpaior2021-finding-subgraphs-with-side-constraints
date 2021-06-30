@@ -1,0 +1,8 @@
+find f : function (total, injective)
+    P --> T
+
+such that forAll a : P .
+    plab(a) = tlab(f(a))
+
+such that forAll ((a, b), lbl) in pat .
+    ((f(a), f(b)), lbl) in toSet(tgt)
